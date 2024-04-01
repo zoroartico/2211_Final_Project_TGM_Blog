@@ -4,7 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>_2211_Final_Project_TGM_Blog</RootNamespace>
+	  <UserSecretsId>aspnet-_2211_Final_Project_TGM_Blog_-7436030f-3a90-4f15-abc9-12ca048a1d71</UserSecretsId>
+	  <RootNamespace>_2211_Final_Project_TGM_Blog</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,11 +35,13 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
   </ItemGroup>
 
 </Project>

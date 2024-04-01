@@ -22,6 +22,15 @@ namespace _2211_Final_Project_TGM_Blog.Controllers
         {
             return View();
         }
+        public IActionResult Login()
+        {
+            return RedirectToAction("Login", "Account", new { area = "Identity" });
+        }
+
+        public IActionResult Register()
+        {
+            return RedirectToAction("Register", "Account", new { area = "Identity" });
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

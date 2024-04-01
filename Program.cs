@@ -1,9 +1,6 @@
 using _2211_Final_Project_TGM_Blog.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,10 +36,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
 
 app.Run();
