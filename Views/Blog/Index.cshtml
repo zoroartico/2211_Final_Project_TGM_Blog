@@ -1,0 +1,35 @@
+﻿@model IEnumerable<_2211_Final_Project_TGM_Blog.Models.Blog.BlogPost>
+@inject UserManager<IdentityUser> UserManager
+@{
+    var currentUser = UserManager.GetUserAsync(User).Result;
+    bool isDev = UserManager.IsInRoleAsync(currentUser, "Dev").Result;
+}
+
+<h2>Blog Posts</h2>
+
+@if (isDev)
+{
+    <a asp-action="Create" class="btn btn-primary">Create Blog Post</a>
+}
+
+@if (Model.Any())
+{
+    <ul>
+        @foreach (var post in Model)
+        {
+            <li>
+                <h3>@post.Title</h3>
+                <p>@post.Content</p>
+                <div>
+                    <form asp-action="Like" asp-route-postId="@post.Id" method="post">
+                        <button type="submit" class="btn btn-primary">Like</button>
+                    </form>
+                </div>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No blog posts available.</p>
+}
