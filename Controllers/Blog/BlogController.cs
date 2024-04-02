@@ -16,16 +16,19 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         private readonly UserManager<IdentityUser> _userManager;
         private readonly UserRoleManager _userRoleManager;
         private readonly ILogger<BlogController> _logger;
+        private readonly LikeService _likeService;
 
         public BlogController(ApplicationDbContext context, 
             UserManager<IdentityUser> userManager, 
             UserRoleManager userRoleManager,
-            ILogger<BlogController> logger)
+            ILogger<BlogController> logger,
+            LikeService likeService)
         {
             _context = context;
             _userManager = userManager;
             _userRoleManager = userRoleManager;
             _logger = logger;
+            _likeService = likeService;
         }
 
         public async Task<IActionResult> MakeUserDev(string userId)
@@ -37,7 +40,21 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             }
             else
             {
-                ModelState.AddModelError("", "Failed to make the user a Dev.");
+                _logger.LogError("Failed to make the user a Dev.");
+                return RedirectToAction("Index");
+            }
+        }
+
+        public async Task<IActionResult> MakeUserUser(string userId)
+        {
+            var result = await _userRoleManager.AddUserToRole(userId, "User");
+            if (result)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                _logger.LogError("Failed to make the user a User.");
                 return RedirectToAction("Index");
             }
         }
@@ -49,7 +66,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             return View(blogPosts);
         }
 
-        [Authorize]//(Roles = "Dev")] // Only users in "Dev" role can access this action
+        [Authorize]//(Roles = "Dev")] //only users in "Dev" role can access this action
         [HttpGet]
         public IActionResult CreateBlogPost()
         {
@@ -69,8 +86,6 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             return RedirectToAction(nameof(Index));
         }
 
-
-
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -79,25 +94,11 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             var user = await _userManager.GetUserAsync(User);
             var blogPost = await _context.BlogPosts.FindAsync(postId);
 
-            if (blogPost is null)
-            {
-                return NotFound();
-            }
+            await _likeService.Like(user.Id, postId, blogPost);
 
-            Like like = new Like();
-            like.UserId = user.Id;
-            like.BlogPostId = blogPost.Id;
-            like.BlogPost = blogPost;
+            int likesCount = await _likeService.GetLikes(postId);
 
-            if (blogPost.Likes is null)
-            {
-                blogPost.Likes = new List<Like>();
-            }
-
-            blogPost.Likes.Add(like);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            return Json(new { likesCount });
         }
 
         [Authorize]
@@ -105,15 +106,11 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Unlike(int likeId)
         {
-            _logger.LogInformation($"Unlike called likeId: {likeId}");
-            var like = await _context.Likes.FindAsync(likeId);
-            _logger.LogInformation($"Like: {like}");
-            if (like is not null)
-            {
-                _context.Likes.Remove(like);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction(nameof(Index));
+            await _likeService.Unlike(likeId);
+
+            int likesCount = await _likeService.GetLikesByLikeId(likeId);
+
+            return Json(new { likesCount });
         }
 
     }

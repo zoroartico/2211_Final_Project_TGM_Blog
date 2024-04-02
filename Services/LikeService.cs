@@ -13,11 +13,55 @@ public class LikeService
         _logger = logger;
     }
 
+    public async Task Like(string userId, int blogPostId, BlogPost blogPost)
+    {
+        foreach (Like like in _context.Likes)
+        {
+            if (like.UserId == userId && like.BlogPostId == blogPostId) 
+            {
+                _logger.LogError("Like already exists.");
+                return; 
+            }
+        }
+        if (userId is not null && blogPost is not null)
+        {
+            blogPost.Likes ??= [];
+            var newLike = new Like
+            {
+                UserId = userId,
+                BlogPostId = blogPostId,
+                BlogPost = blogPost
+            };
+            blogPost.Likes.Add(newLike);
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task Unlike(int likeId)
+    {
+        var like = await _context.Likes.FindAsync(likeId);
+        if (like is not null)
+        {
+            _context.Likes.Remove(like);
+            await _context.SaveChangesAsync();
+        }
+    }
+
     public async Task<int> GetLikes(int postId)
     {
         return await _context.Likes
             .Where(like => like.BlogPostId == postId)
             .CountAsync();
+    }
+
+    public async Task<int> GetLikesByLikeId(int likeId)
+    {
+        var like = await _context.Likes.FindAsync(likeId);
+        if (like != null)
+        {
+            return await _context.Likes.CountAsync(l => l.BlogPostId == like.BlogPostId);
+        }
+        return 0;
     }
 
     public async Task<bool> HasLikes(int postId)
