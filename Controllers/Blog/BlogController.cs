@@ -81,8 +81,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
 
             if (blogPost is null)
             {
-                // Handle the case where the blog post with the given ID is not found
-                return NotFound(); // Or any other appropriate action
+                return NotFound();
             }
 
             Like like = new Like();
@@ -98,6 +97,22 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             blogPost.Likes.Add(like);
             await _context.SaveChangesAsync();
 
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Unlike(int likeId)
+        {
+            _logger.LogInformation($"Unlike called likeId: {likeId}");
+            var like = await _context.Likes.FindAsync(likeId);
+            _logger.LogInformation($"Like: {like}");
+            if (like is not null)
+            {
+                _context.Likes.Remove(like);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
 

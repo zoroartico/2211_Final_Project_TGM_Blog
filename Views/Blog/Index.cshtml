@@ -14,7 +14,7 @@
 @if (Model.Any())
 {
     <ul>
-        @foreach (var post in Model)
+        @foreach (var post in Model.Reverse())
         {
             <li>
                 <h3>@post.Title</h3>
@@ -33,7 +33,9 @@
                     <div>
                          @if (userLikedPost)
                          {
-                             <form asp-action="Unlike" asp-route-postId="@post.Id" method="post">
+                            var like = await likeService.GetLike(post.Id, currentUser.Id);
+
+                            <form asp-action="Unlike" asp-route-likeId="@like.Id" method="post">
                                  <button type="submit" class="btn btn-primary">
                                      Unlike
                                  </button>
