@@ -19,7 +19,6 @@ namespace _2211_Final_Project_TGM_Blog.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Add any additional configuration for your models here, if needed
         }
     }
 }
