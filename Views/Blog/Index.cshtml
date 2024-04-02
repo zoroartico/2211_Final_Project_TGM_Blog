@@ -1,16 +1,15 @@
 ﻿@model IEnumerable<_2211_Final_Project_TGM_Blog.Models.Blog.BlogPost>
 @inject UserManager<IdentityUser> UserManager
+@inject LikeService likeService
 @{
     var currentUser = UserManager.GetUserAsync(User).Result;
-    bool isDev = UserManager.IsInRoleAsync(currentUser, "Dev").Result;
+    bool isDev = currentUser != null && UserManager.IsInRoleAsync(currentUser, "Dev").Result;
+    bool isAuthenticated = User.Identity.IsAuthenticated;
 }
 
 <h2>Blog Posts</h2>
 
-@if (isDev)
-{
-    <a asp-action="Create" class="btn btn-primary">Create Blog Post</a>
-}
+<a asp-controller="Blog" asp-action="CreateBlogPost" class="btn btn-primary">Create Blog Post</a>
 
 @if (Model.Any())
 {
@@ -20,11 +19,36 @@
             <li>
                 <h3>@post.Title</h3>
                 <p>@post.Content</p>
-                <div>
-                    <form asp-action="Like" asp-route-postId="@post.Id" method="post">
-                        <button type="submit" class="btn btn-primary">Like</button>
-                    </form>
-                </div>
+                @if (await likeService.HasLikes(post.Id))
+                {
+                    <p>Likes: @await likeService.GetLikes(post.Id)</p>
+                }
+                else
+                {
+                    <p>No likes.</p>
+                }
+                @if (isAuthenticated)
+                {
+                    bool userLikedPost = await likeService.HasUserLikedPost(post.Id, currentUser.Id);
+                    <div>
+                         @if (userLikedPost)
+                         {
+                             <form asp-action="Unlike" asp-route-postId="@post.Id" method="post">
+                                 <button type="submit" class="btn btn-primary">
+                                     Unlike
+                                 </button>
+                             </form>
+                         }
+                         else
+                         {
+                            <form asp-action="Like" asp-route-postId="@post.Id" method="post">
+                                <button type="submit" class="btn btn-primary">
+                                    Like
+                                </button>
+                            </form>
+                         }
+                    </div>
+                }
             </li>
         }
     </ul>

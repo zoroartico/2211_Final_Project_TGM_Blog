@@ -10,6 +10,6 @@ namespace _2211_Final_Project_TGM_Blog.Models.Blog
         [Required]
         public string Content { get; set; }
         public string UserId { get; set; } //foreign key from ApplicationUser
-        public ICollection<Like> Likes { get; set; }
+        public ICollection<Like>? Likes { get; set; }
     }
 }
