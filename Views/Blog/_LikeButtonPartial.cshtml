@@ -5,6 +5,7 @@
     else { likesCounter = "No likes"; }
 }
 
+<!-- this partial view generates the current likes and valid button state for the blog posts -->
 @if (Model.IsAuthenticated)
 {
     if (Model.UserLikedPost)

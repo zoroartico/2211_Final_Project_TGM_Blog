@@ -23,15 +23,15 @@ namespace _2211_Final_Project_TGM_Blog.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<BlogPost>()
-                .HasKey(b => b.Id);
+                .HasKey(b => b.Id); //blog posts have a primary key: Id
 
             modelBuilder.Entity<BlogPost>()
-                .HasMany(b => b.Likes)
-                .WithOne(l => l.BlogPost)
-                .HasForeignKey(l => l.BlogPostId);
+                .HasMany(b => b.Likes) //a blog post can have many likes
+                .WithOne(l => l.BlogPost) //a like can only have one blog post
+                .HasForeignKey(l => l.BlogPostId); //likes have a blog post Id as a foreign key
 
             modelBuilder.Entity<Like>()
-                .HasKey(l => l.Id);
+                .HasKey(l => l.Id); //likes have a primary key: Id
         }
     }
 }

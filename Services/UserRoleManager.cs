@@ -9,6 +9,7 @@
         private readonly ILogger<UserRoleManager> _logger;
         private string defaultRole = "User";
 
+        //constructing the UserRoleManager class
         public UserRoleManager(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<UserRoleManager> logger)
         {
             _userManager = userManager;
@@ -16,15 +17,16 @@
             _logger = logger;
         }
 
+        //function that sets a user to just a default role
         public async Task<bool> SetDefaultRole(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                // Get all roles for the user
+                //get all roles for the user
                 var userRoles = await _userManager.GetRolesAsync(user);
 
-                // Remove all roles except the default role
+                //removes all roles except the default role from the user
                 foreach (var role in userRoles)
                 {
                     if (role != defaultRole)
@@ -37,6 +39,7 @@
             return false;
         }
 
+        //function that adds a role to a given user, creating one if the role doesn't exist.
         public async Task<bool> AddUserToRole(string userId, string roleName)
         {
             _logger.LogInformation($"Attempting to convert {userId} to role: {roleName}");

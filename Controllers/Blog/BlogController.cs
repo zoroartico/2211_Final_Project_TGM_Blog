@@ -19,6 +19,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         private readonly LikeService _likeService;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
+        //constructing the BlogController class
         public BlogController(ApplicationDbContext context, 
             UserManager<IdentityUser> userManager, 
             UserRoleManager userRoleManager,
@@ -34,6 +35,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             _hostingEnvironment = hostingEnvironment;
         }
 
+        //function that utilizes the _userRoleManager to give a user a "Dev" role
         public async Task<IActionResult> MakeUserDev(string userId)
         {
             var result = await _userRoleManager.AddUserToRole(userId, "Dev");
@@ -48,6 +50,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             }
         }
 
+        //function that utilizes the _userRoleManager to remove all roles from a user
         public async Task<IActionResult> MakeUserUser(string userId)
         {
             var result = await _userRoleManager.SetDefaultRole(userId);
@@ -62,6 +65,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             }
         }
 
+        //index method, loads when entering the blog controller
         public IActionResult Index()
         {
             _logger.LogInformation("Loading Index");
@@ -69,6 +73,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             return View(blogPosts);
         }
 
+        //method onluy accessible to "Dev"s to create a blog post
         [Authorize (Roles = "Dev")] //only users in "Dev" role can access this action
         [HttpGet]
         public IActionResult CreateBlogPost()
@@ -76,6 +81,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             return View();
         }
 
+        //method that posts a created blofpost, only accessible to the "Dev" role
         [Authorize (Roles = "Dev")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -83,6 +89,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         {
             try
             {
+                //adds an image file if there is one
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
@@ -104,16 +111,18 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
 
                 _context.BlogPosts.Add(blogPost);
                 await _context.SaveChangesAsync();
-                
+                //redirects to index upon completion
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
+                //returns the create view if there are exceptions
                 _logger.LogError(ex, "Error creating blog post.");
                 return View(blogPost);
             }
         }
 
+        //method only accessible to "Dev"s that deletes a given blog post
         [Authorize(Roles = "Dev")]
         [HttpPost]
         public async Task<IActionResult> Delete(int postId)
@@ -131,7 +140,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             return RedirectToAction(nameof(Index));
         }
 
-
+        //method that handles returning a partial view when a user likes a post
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -139,36 +148,31 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         {
             var user = await _userManager.GetUserAsync(User);
             var blogPost = await _context.BlogPosts.FindAsync(postId);
-
             await _likeService.Like(user.Id, postId, blogPost);
-
             var model = await GetLikeButtonModel(postId);
-
             return PartialView("_LikeButtonPartial", model);
         }
 
+        //method that returns a partial view upon a user unliking a post
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Unlike(int likeId)
         {
             int postId = await _likeService.GetPostIdByLikeId(likeId);
-
             await _likeService.Unlike(likeId);
-
             var model = await GetLikeButtonModel(postId);
-
             return PartialView("_LikeButtonPartial", model);
         }
 
+        //method that handles generation of the LikeButton model in a given view
         private async Task<LikeButtonModel> GetLikeButtonModel(int postId)
         {
             var currentUser = await _userManager.GetUserAsync(User);
             bool userLikedPost = await _likeService.HasUserLikedPost(postId, currentUser.Id);
             int likeId = userLikedPost ? await _likeService.GetLikeId(postId, currentUser.Id) : -1;
             int likeQty = await _likeService.GetLikesByLikeId(likeId);
-
-            return new LikeButtonModel
+            return new LikeButtonModel //returns a model with generated fields
             {
                 IsAuthenticated = User.Identity.IsAuthenticated,
                 UserLikedPost = userLikedPost,

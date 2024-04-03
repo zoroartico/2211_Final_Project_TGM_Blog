@@ -7,10 +7,12 @@
     bool isAuthenticated = User.Identity.IsAuthenticated;
     bool userLikedPost = false;
     var likeId = -1;
+    var title = "Developer Log";
+    ViewData["Title"] = title;
 }
 
 <h2 class="display-4 mb-1 text-center">Into the Great Muscaria</h2>
-<h4 class="display-5 mb-4 text-center">Developer Log</h4>
+<h4 class="display-5 mb-4 text-center">@title</h4>
 
 <div class="d-flex flex-column align-items-center justify-content-center mb-2 text-center">
     @if (isDev)
