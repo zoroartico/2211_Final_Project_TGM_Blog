@@ -1,0 +1,55 @@
+﻿@model _2211_Final_Project_TGM_Blog.Models.SupportChat.SupportDashboardViewModel
+
+<div class="container my-5">
+    <div class="row">
+        <!-- Left Component for Chat Requests -->
+        <div class="col-md-6 mb-4">
+            @if (User.IsInRole("User"))
+            {
+                <form asp-controller="ChatRequest" asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-primary btn-lg">Create Chat Request</button>
+                </form>
+
+                @if (TempData["Message"] != null)
+                {
+                    <div class="alert alert-success mt-2" role="alert">
+                        @TempData["Message"]
+                    </div>
+                }
+            }
+            else if (User.IsInRole("Agent"))
+            {
+                <h2>Pending Requests</h2>
+                <div class="list-group">
+                    @foreach (var request in Model.PendingRequests)
+                    {
+                        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Request #@request.Id
+
+                            <form asp-action="Accept" asp-controller="ChatRequest" method="post" class="form-inline">
+                                <input type="hidden" name="id" value="@request.Id" />
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-success">Accept</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Right Component for List of Chats -->
+        <div class="col-md-6">
+            <h2>Your Chats</h2>
+            @foreach (var chat in Model.Chats)
+            {
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Chat with @chat.User2Id</h5>
+                        <a href="@Url.Action("Details", "Chat", new { id = chat.Id })" class="btn btn-outline-primary">View Chat</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

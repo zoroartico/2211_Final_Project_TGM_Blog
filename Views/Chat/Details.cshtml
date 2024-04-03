@@ -1,0 +1,65 @@
+﻿@model _2211_Final_Project_TGM_Blog.Models.SupportChat.Chat
+@{
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
+
+<h2>Chat Details</h2>
+
+<div class="messages">
+    @foreach (var message in Model.Messages.OrderBy(m => m.TimeSent))
+    {
+        <div class="@("message " + (message.SenderUserId == currentUserId ? "current-user" : "other-user"))">
+            <div class="message-content">@message.Content</div>
+            <small>@message.TimeSent.ToString("g")</small>
+        </div>
+    }
+</div>
+
+<form asp-controller="Message" asp-action="Send" method="post">
+    <input type="hidden" name="ChatId" value="@Model.Id" />
+    <div class="form-group">
+        <label for="messageContent">Message:</label>
+        <textarea id="messageContent" name="Content" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Send</button>
+</form>
+
+<style>
+    .messages {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+
+    .message {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        padding: 10px;
+        word-wrap: break-word;
+        border-radius: 10px;
+        max-width: 70%;
+    }
+
+    .current-user {
+        align-self: flex-end;
+        background-color: #007bff;
+        color: white;
+        border-top-right-radius: 0;
+    }
+
+    .other-user {
+        align-self: flex-start;
+        background-color: #f0f0f0;
+        color: black;
+        border-top-left-radius: 0;
+    }
+
+    .message-content {
+        word-break: break-word;
+    }
+
+    .form-group {
+        margin-top: 20px;
+    }
+</style>
