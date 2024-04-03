@@ -13,12 +13,12 @@
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.Username" class="form-control" autocomplete="off" aria-required="true" placeholder="Username" />
+                <input asp-for="Input.Username" class="form-control" autocomplete="username" aria-required="true" placeholder="Username" />
                 <label asp-for="Input.Username">Username</label>
                 <span asp-validation-for="Input.Username" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <input asp-for="Input.Email" class="form-control" autocomplete="email" aria-required="true" placeholder="name@example.com" />
                 <label asp-for="Input.Email">Email</label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
@@ -35,7 +35,7 @@
             <div class="form-floating mb-3">
                 <select asp-for="Input.Role" class="form-select" aria-label="Role">
                     <option value="">Select a role</option>
-                    @foreach (var role in Model.Roles)
+                    @foreach (var role in ViewBag.Roles)
                     {
                         <option value="@role.Name">@role.Name</option>
                     }
