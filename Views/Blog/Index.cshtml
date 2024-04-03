@@ -9,7 +9,8 @@
     var likeId = -1;
 }
 
-<h2 class="display-4 mb-4 text-center">Blog Posts</h2>
+<h2 class="display-4 mb-1 text-center">Into the Great Muscaria</h2>
+<h4 class="display-5 mb-4 text-center">Developer Log</h4>
 
 <div class="d-flex flex-column align-items-center justify-content-center mb-2 text-center">
     @if (isDev)
@@ -25,7 +26,6 @@
     }
     else if (isAuthenticated)
     {
-        <p class="text-center">Unauthorized.</p>
         <form class="col-sm-2 mt-2" asp-action="MakeUserDev" asp-route-userId="@currentUser.Id" method="post">
             <button type="submit" class="btn btn-success">
                 Get Dev Role
@@ -44,8 +44,8 @@
                 {
                     <div class="d-flex align-items-end justify-content-end">
                         <form asp-action="Delete" asp-route-postId="@post.Id" method="post" class="delBtn">
-                            <button type="submit" value="Delete" class="btn btn-outline-dark">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                            <button type="submit" value="Delete" class="btn btn-link" style="color:darkslategrey">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
                                 </svg>
                             </button>
@@ -55,27 +55,27 @@
                 <div class="card-body d-flex flex-column align-items-center justify-content-center">
                     @if (post.ImageUrl is not null)
                     {
-                        <img src="@post.ImageUrl"
+                        <img class="card-img" src="@post.ImageUrl"
                         alt="Blog Image"
-                        class="card-image-top img-fluid rounded-3 border-5 border-secondary"
+                        class="card-image img-fluid rounded-3 border-5 border-secondary"
                         style="max-width: 100%; max-height: 100%;" />
                     }
                     <h5 class="card-title">@post.Title</h5>
                     <h6 class=""></h6>
                     <p class="card-text">@post.Content</p>
-                    <div class="likes-section">
-                        @if (isAuthenticated) { userLikedPost = await likeService.HasUserLikedPost(post.Id, currentUser.Id); }
-                        @if (userLikedPost) { likeId = await likeService.GetLikeId(post.Id, currentUser.Id); }
-                        @await Html.PartialAsync("_LikeButtonPartial", 
-                        new _2211_Final_Project_TGM_Blog.Models.Blog.LikeButtonModel 
-                        { 
-                            IsAuthenticated = isAuthenticated, 
-                            UserLikedPost = userLikedPost, 
-                            LikeId = likeId, 
-                            PostId = post.Id,
-                            LikeQTY = await likeService.GetLikes(post.Id)
-                        })
-                    </div>
+                </div>
+                <div class="likes-section">
+                    @if (isAuthenticated) { userLikedPost = await likeService.HasUserLikedPost(post.Id, currentUser.Id); }
+                    @if (userLikedPost) { likeId = await likeService.GetLikeId(post.Id, currentUser.Id); }
+                    @await Html.PartialAsync("_LikeButtonPartial",
+                    new _2211_Final_Project_TGM_Blog.Models.Blog.LikeButtonModel
+                    {
+                        IsAuthenticated = isAuthenticated,
+                        UserLikedPost = userLikedPost,
+                        LikeId = likeId,
+                        PostId = post.Id,
+                        LikeQTY = await likeService.GetLikes(post.Id)
+                    })
                 </div>
             </div>
         }
