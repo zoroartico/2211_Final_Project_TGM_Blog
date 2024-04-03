@@ -14,6 +14,7 @@
 <h2 class="display-4 mb-1 text-center">Into the Great Muscaria</h2>
 <h4 class="display-5 mb-4 text-center">@title</h4>
 
+<!-- if the user is a Developer, they get access to a create blog button -->
 <div class="d-flex flex-column align-items-center justify-content-center mb-2 text-center">
     @if (isDev)
     {
@@ -42,6 +43,7 @@
         @foreach (var post in Model.Reverse())
         {
             <div class="card mb-2 col-lg-12" style="max-width: 500px">
+                <!-- if a user is a developer they may delete a blog post -->
                 @if (isDev)
                 {
                     <div class="d-flex align-items-end justify-content-end">
@@ -67,6 +69,7 @@
                     <p class="card-text">@post.Content</p>
                 </div>
                 <div class="likes-section">
+                    <!-- generating all relevant information for the like button partial view -->
                     @if (isAuthenticated) { userLikedPost = await likeService.HasUserLikedPost(post.Id, currentUser.Id); }
                     @if (userLikedPost) { likeId = await likeService.GetLikeId(post.Id, currentUser.Id); }
                     @await Html.PartialAsync("_LikeButtonPartial",
@@ -130,7 +133,7 @@ else
                     data: form.serialize(),
                     success: function (response) 
                     {
-                        alert('Post deleted successfully.');
+                        //reloads the page upon deletion
                         location.reload();
                     },
                     error: function () 
