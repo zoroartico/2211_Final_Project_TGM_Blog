@@ -5,18 +5,20 @@
     var currentUser = UserManager.GetUserAsync(User).Result;
     bool isDev = currentUser != null && UserManager.IsInRoleAsync(currentUser, "Dev").Result;
     bool isAuthenticated = User.Identity.IsAuthenticated;
+    bool userLikedPost = false;
+    var likeId = -1;
 }
 
-<h2 class="display-4 mb-2 text-center">Blog Posts</h2>
+<h2 class="display-4 mb-4 text-center">Blog Posts</h2>
 
-<div class="d-flex flex-column align-items-center justify-content-center mb-2">
+<div class="d-flex flex-column align-items-center justify-content-center mb-2 text-center">
     @if (isDev)
     {
         <a asp-controller="Blog" asp-action="CreateBlogPost" class="btn btn-primary col-sm-2">
             Create Blog Post
         </a>
-        <form asp-action="MakeUserUser" asp-route-userId="@currentUser.Id" method="post">
-            <button type="submit" class="btn btn-primary col-sm-10 mt-2">
+        <form class="col-sm-2 mt-2" asp-action="MakeUserUser" asp-route-userId="@currentUser.Id" method="post">
+            <button type="submit" class="btn btn-success">
                 Revert Role
             </button>
         </form>
@@ -24,8 +26,8 @@
     else if (isAuthenticated)
     {
         <p class="text-center">Unauthorized.</p>
-        <form asp-action="MakeUserDev" asp-route-userId="@currentUser.Id" method="post">
-            <button type="submit" class="btn btn-primary col-sm-10 mt-2">
+        <form class="col-sm-2 mt-2" asp-action="MakeUserDev" asp-route-userId="@currentUser.Id" method="post">
+            <button type="submit" class="btn btn-success">
                 Get Dev Role
             </button>
         </form>
@@ -37,43 +39,29 @@
     <div class="d-flex flex-column align-items-center justify-content-center mb-2">
         @foreach (var post in Model.Reverse())
         {
-            <div class="card mb-2 col-lg-12 style="max-width: 500px">
+            <div class="card mb-2 col-lg-12" style="max-width: 500px">
                 <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    @if (post.ImageUrl is not null)
+                    {
+                        <img src="@post.ImageUrl"
+                        alt="Blog Image"
+                        class="card-image-top img-fluid rounded border border-secondary"
+                        style="max-width: 100%; max-height: 100%;" />
+                    }
                     <h5 class="card-title">@post.Title</h5>
                     <p class="card-text">@post.Content</p>
-                    <div class="likes-section mb-2 text-muted">
-                        @if (await likeService.HasLikes(post.Id))
-                        {
-                            <h6 class="card-subtitle">Likes: @await likeService.GetLikes(post.Id)</h6>
-                        }
-                        else
-                        {
-                            <h6 class="card-subtitle">No likes.</h6>
-                        }
-                    </div>
-                    <div class="like-btn-section">
-                        @if (isAuthenticated)
-                        {
-                            bool userLikedPost = await likeService.HasUserLikedPost(post.Id, currentUser.Id);
-                            @if (userLikedPost)
-                            {
-                                var likeId = await likeService.GetLikeId(post.Id, currentUser.Id);
-
-                                <form asp-action="Unlike" asp-route-likeId="@likeId" method="post" class="likeBtn">
-                                    <button type="submit" class="btn btn-primary" style="min-width: 200px;">
-                                        Unlike
-                                    </button>
-                                </form>
-                            }
-                            else
-                            {
-                                <form asp-action="Like" asp-route-postId="@post.Id" method="post" class="likeBtn">
-                                    <button type="submit" class="btn btn-outline-primary" style="min-width: 200px;">
-                                        Like
-                                    </button>
-                                </form>
-                            }
-                        }
+                    <div class="likes-section">
+                        @if (isAuthenticated) { userLikedPost = await likeService.HasUserLikedPost(post.Id, currentUser.Id); }
+                        @if (userLikedPost) { likeId = await likeService.GetLikeId(post.Id, currentUser.Id); }
+                        @await Html.PartialAsync("_LikeButtonPartial", 
+                        new _2211_Final_Project_TGM_Blog.Models.Blog.LikeButtonModel 
+                        { 
+                            IsAuthenticated = isAuthenticated, 
+                            UserLikedPost = userLikedPost, 
+                            LikeId = likeId, 
+                            PostId = post.Id,
+                            LikeQTY = await likeService.GetLikes(post.Id)
+                        })
                     </div>
                 </div>
             </div>
@@ -91,7 +79,6 @@ else
 <script>
     $(document).ready(function () 
     {
-        //a jQuery function that handles the like/unlike button events
         $(document).on('click', '.likeBtn', function (e) 
         {
             e.preventDefault();
@@ -102,19 +89,8 @@ else
                 data: form.serialize(),
                 success: function (response) 
                 {
-                    //updates the likes section with the updated count
-                    var likesSection = form.closest('.card-body').find('.likes-section');
-                    if (response.likesCount > 0) 
-                    {
-                        likesSection.html('Likes: ' + response.likesCount);
-                    } 
-                    else 
-                    {
-                        likesSection.html('No likes.');
-                    }
-                    //updates the button to unlike if the user liked and vice versa
-                    var likeBtnSection = form.closest('.card-body').find('.like-btn-section');
-                    likeBtnSection.html('');
+                    //replaces the existing likes field with the updated one
+                    $(form).replaceWith(response);
                 },
                 error: function () 
                 {

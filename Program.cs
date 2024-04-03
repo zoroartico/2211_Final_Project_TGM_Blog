@@ -1,11 +1,11 @@
 using _2211_Final_Project_TGM_Blog.Data;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using _2211_Final_Project_TGM_Blog.Services;
-
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +30,12 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<UserRoleManager>();
 builder.Services.AddScoped<LikeService>();
+
+// Register IISServerOptions
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.AllowSynchronousIO = true; // Or configure other options as needed
+});
 
 var app = builder.Build();
 

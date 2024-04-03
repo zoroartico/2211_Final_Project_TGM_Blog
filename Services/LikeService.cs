@@ -79,6 +79,19 @@ public class LikeService
             .FirstOrDefaultAsync(l => l.BlogPostId == postId && l.UserId == userId);
     }
 
+    public async Task<Like?> GetLikeById(int likeId)
+    {
+        return await _context.Likes
+            .FirstOrDefaultAsync(l => l.Id == likeId);
+    }
+
+    public async Task<int> GetPostIdByLikeId(int likeId)
+    {
+        var like = await GetLikeById(likeId);
+        if (like is not null) { return like.BlogPostId; }
+        return 0;
+    }
+
     public async Task<int> GetLikeId(int postId, string userId)
     {
         _logger.LogInformation("Get Like Id Called.");
