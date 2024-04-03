@@ -1,12 +1,17 @@
 using _2211_Final_Project_TGM_Blog.Data;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
-
+using _2211_Final_Project_TGM_Blog.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -22,6 +27,15 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<UserRoleManager>();
+builder.Services.AddScoped<LikeService>();
+
+// Register IISServerOptions
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.AllowSynchronousIO = true; // Or configure other options as needed
+});
 
 var app = builder.Build();
 

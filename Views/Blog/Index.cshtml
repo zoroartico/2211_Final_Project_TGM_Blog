@@ -1,0 +1,102 @@
+﻿@model IEnumerable<_2211_Final_Project_TGM_Blog.Models.Blog.BlogPost>
+@inject UserManager<IdentityUser> UserManager
+@inject LikeService likeService
+@{
+    var currentUser = UserManager.GetUserAsync(User).Result;
+    bool isDev = currentUser != null && UserManager.IsInRoleAsync(currentUser, "Dev").Result;
+    bool isAuthenticated = User.Identity.IsAuthenticated;
+    bool userLikedPost = false;
+    var likeId = -1;
+}
+
+<h2 class="display-4 mb-4 text-center">Blog Posts</h2>
+
+<div class="d-flex flex-column align-items-center justify-content-center mb-2 text-center">
+    @if (isDev)
+    {
+        <a asp-controller="Blog" asp-action="CreateBlogPost" class="btn btn-primary col-sm-2">
+            Create Blog Post
+        </a>
+        <form class="col-sm-2 mt-2" asp-action="MakeUserUser" asp-route-userId="@currentUser.Id" method="post">
+            <button type="submit" class="btn btn-success">
+                Revert Role
+            </button>
+        </form>
+    }
+    else if (isAuthenticated)
+    {
+        <p class="text-center">Unauthorized.</p>
+        <form class="col-sm-2 mt-2" asp-action="MakeUserDev" asp-route-userId="@currentUser.Id" method="post">
+            <button type="submit" class="btn btn-success">
+                Get Dev Role
+            </button>
+        </form>
+    }
+</div>
+
+@if (Model.Any())
+{
+    <div class="d-flex flex-column align-items-center justify-content-center mb-2">
+        @foreach (var post in Model.Reverse())
+        {
+            <div class="card mb-2 col-lg-12" style="max-width: 500px">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    @if (post.ImageUrl is not null)
+                    {
+                        <img src="@post.ImageUrl"
+                        alt="Blog Image"
+                        class="card-image-top img-fluid rounded border border-secondary"
+                        style="max-width: 100%; max-height: 100%;" />
+                    }
+                    <h5 class="card-title">@post.Title</h5>
+                    <p class="card-text">@post.Content</p>
+                    <div class="likes-section">
+                        @if (isAuthenticated) { userLikedPost = await likeService.HasUserLikedPost(post.Id, currentUser.Id); }
+                        @if (userLikedPost) { likeId = await likeService.GetLikeId(post.Id, currentUser.Id); }
+                        @await Html.PartialAsync("_LikeButtonPartial", 
+                        new _2211_Final_Project_TGM_Blog.Models.Blog.LikeButtonModel 
+                        { 
+                            IsAuthenticated = isAuthenticated, 
+                            UserLikedPost = userLikedPost, 
+                            LikeId = likeId, 
+                            PostId = post.Id,
+                            LikeQTY = await likeService.GetLikes(post.Id)
+                        })
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No blog posts available.</p>
+}
+
+<!-- Importing scripts for asynchronous likes. Jquery used for simplicity.-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () 
+    {
+        $(document).on('click', '.likeBtn', function (e) 
+        {
+            e.preventDefault();
+            var form = $(this).closest('form');
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function (response) 
+                {
+                    //replaces the existing likes field with the updated one
+                    $(form).replaceWith(response);
+                },
+                error: function () 
+                {
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>
