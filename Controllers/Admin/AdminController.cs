@@ -47,8 +47,9 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
                 {
                     Username = user.UserName,
                     Email = user.Email,
-                    Role = roles.FirstOrDefault(), // Assuming you only want to display one role
-                    RoleList = allRoles.Select(r => new SelectListItem { Text = r, Value = r }).ToList()
+                    Role = roles, 
+                    RoleList = allRoles,
+                    Search = search
                 };
 
                 // Pass the user details to the view
@@ -61,7 +62,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
 
 
         [HttpPost]
-        public async Task<IActionResult> UserAccounts(UserAccounts model)
+        public async Task<IActionResult> Update(UserAccounts model)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +88,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
 
                     // Update user's role if it has changed
                     var existingRoles = await _userManager.GetRolesAsync(user);
-                    if (existingRoles.FirstOrDefault() != model.Role)
+                    if (existingRoles != model.Role)
                     {
                         // Remove existing roles
                         foreach (var role in existingRoles)
@@ -96,20 +97,20 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
                         }
 
                         // Add new role
-                        await _userManager.AddToRoleAsync(user, model.Role);
+                        await _userManager.AddToRoleAsync(user, model.Role.FirstOrDefault());
                     }
 
-                    return RedirectToAction("UserAccounts");
+                    return RedirectToAction("UserAccounts",model.Search);
                 }
                 else
                 {
                     ViewData["ErrorMessage"] = "User not found.";
-                    return View(model);
+                    return View("UserAccounts", model);
                 }
             }
 
             // If model state is not valid, return the view with errors
-            return View(model);
+            return View("UserAccounts", model);
         }
 
     }

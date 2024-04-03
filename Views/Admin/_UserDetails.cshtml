@@ -1,0 +1,48 @@
+﻿@model UserAccounts
+@if (Model != null)
+{
+    <div>
+        <h4>User Details</h4>
+        <div>
+            <label>Username:</label>
+            <span>@Model.Username</span>
+        </div>
+        <div>
+            <label>Email:</label>
+            <span>@Model.Email</span>
+        </div>
+        <div>
+            <label>Role:</label>
+            @foreach (var role in Model.Role)
+            {
+                <span value="@role">@role</span>
+            }
+        </div>
+        <div>
+            <form asp-action="Update" asp-controller="Admin">
+                <div>
+                    <label for="Username">Update Username:</label>
+                    <input type="text" id="Username" name="Username" value="@Model.Username" />
+                </div>
+                <div>
+                    <label for="Email">Update Email:</label>
+                    <input type="text" id="Email" name="Email" value="@Model.Email" />
+                </div>
+                <div>
+                    <label for="Role">Update Role:</label>
+                    <select id="Role" name="Role">
+                        @foreach (var role in Model.RoleList)
+                        {
+                            <option value="@role">@role</option>
+                        }
+                    </select>
+                </div>
+                <button class="btn btn-info" type="submit">Update</button>
+            </form>
+        </div>
+    </div>
+}
+else
+{
+    <div>@ViewData["ErrorMessage"]</div>
+}
