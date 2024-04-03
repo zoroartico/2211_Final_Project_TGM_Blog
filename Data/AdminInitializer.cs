@@ -19,7 +19,7 @@ namespace _2211_Final_Project_TGM_Blog.Data
                 {
                     var user = new IdentityUser { UserName = userName, Email = email , PasswordHash = password};
                     await userManager.CreateAsync(user);
-                    await userManager.AddToRoleAsync(user, "Agent");
+                    await userManager.AddToRoleAsync(user, "Admin");
                 }
                 
             }

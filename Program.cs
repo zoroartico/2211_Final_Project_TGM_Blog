@@ -51,5 +51,4 @@ app.MapRazorPages();
 await RolesInitializer.CreateRoles(app.Services);
 await AdminInitializer.CreateUsers(app.Services);
 
-
 app.Run();

@@ -10,7 +10,7 @@ namespace _2211_Final_Project_TGM_Blog.Data
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-                string[] roleNames = { "User", "Agent" };
+                string[] roleNames = { "User", "Agent", "Admin" };
                 foreach (var roleName in roleNames)
                 {
                     var roleExist = await roleManager.RoleExistsAsync(roleName);
