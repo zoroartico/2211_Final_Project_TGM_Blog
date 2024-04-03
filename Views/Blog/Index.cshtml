@@ -40,15 +40,28 @@
         @foreach (var post in Model.Reverse())
         {
             <div class="card mb-2 col-lg-12" style="max-width: 500px">
+                @if (isDev)
+                {
+                    <div class="d-flex align-items-end justify-content-end">
+                        <form asp-action="Delete" asp-route-postId="@post.Id" method="post" class="delBtn">
+                            <button type="submit" value="Delete" class="btn btn-outline-dark">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                }
                 <div class="card-body d-flex flex-column align-items-center justify-content-center">
                     @if (post.ImageUrl is not null)
                     {
                         <img src="@post.ImageUrl"
                         alt="Blog Image"
-                        class="card-image-top img-fluid rounded border border-secondary"
+                        class="card-image-top img-fluid rounded-3 border-5 border-secondary"
                         style="max-width: 100%; max-height: 100%;" />
                     }
                     <h5 class="card-title">@post.Title</h5>
+                    <h6 class=""></h6>
                     <p class="card-text">@post.Content</p>
                     <div class="likes-section">
                         @if (isAuthenticated) { userLikedPost = await likeService.HasUserLikedPost(post.Id, currentUser.Id); }
@@ -77,6 +90,7 @@ else
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+//function that handles the like button updating and submission
     $(document).ready(function () 
     {
         $(document).on('click', '.likeBtn', function (e) 
@@ -97,6 +111,32 @@ else
                     alert('An error occurred. Please try again.');
                 }
             });
+        });
+    });
+    //function that handles the post deleletion
+    $(document).ready(function () 
+    {
+        $(document).on('click', '.delBtn', function (e) 
+        {
+            e.preventDefault();
+            var form = $(this).closest('form');
+            if (confirm("Are you sure you want to delete this post?")) 
+            {
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function (response) 
+                    {
+                        alert('Post deleted successfully.');
+                        location.reload();
+                    },
+                    error: function () 
+                    {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            }
         });
     });
 </script>

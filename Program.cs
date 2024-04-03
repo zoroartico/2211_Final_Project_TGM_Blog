@@ -31,6 +31,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UserRoleManager>();
 builder.Services.AddScoped<LikeService>();
 
+// Setting URLs to be lowercase
+builder.Services.Configure<RouteOptions>(options =>
+{
+    options.LowercaseUrls = true;
+});
+
 // Register IISServerOptions
 builder.Services.Configure<IISServerOptions>(options =>
 {

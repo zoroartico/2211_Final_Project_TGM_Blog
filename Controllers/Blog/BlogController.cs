@@ -114,6 +114,22 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             }
         }
 
+        [Authorize(Roles = "Dev")]
+        [HttpPost]
+        public async Task<IActionResult> Delete(int postId)
+        {
+            try
+            {
+                var blogPost = _context.BlogPosts.FirstOrDefault(b => b.Id == postId);
+                _context.BlogPosts.Remove(blogPost);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting blog post.");
+            }
+            return RedirectToAction(nameof(Index));
+        }
 
 
         [Authorize]
