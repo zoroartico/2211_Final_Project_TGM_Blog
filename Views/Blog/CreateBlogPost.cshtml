@@ -1,52 +1,58 @@
 ﻿@model _2211_Final_Project_TGM_Blog.Models.Blog.BlogPost
 
 @{
-    var title = "Create a Blog Post";
+    var title = "Make Blog Post";
     ViewData["Title"] = title;
 }
 
-<h1>@title</h1>
+<h2 class="display-4 mb-1 text-center">@title</h2>
 
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="d-flex flex-column align-items-center justify-content-center mb-2 text-center">
         <form method="post" asp-action="CreateBlogPost" enctype="multipart/form-data">
 
             @Html.AntiForgeryToken()
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group">
-                <label asp-for="Title">
-                    @Html.DisplayNameFor(model => model.Title)
-                </label>
-                <input asp-for="Title" class="form-control" />
+            <div class="form-group mb-2">
+                <input asp-for="Title" 
+                class="form-control"
+                autocomplete="off"
+                placeholder="@Html.DisplayNameFor(model => model.Title)" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-2">
-                <label asp-for="Content">
-                    @Html.DisplayNameFor(model => model.Content)
-                </label>
-                <textarea asp-for="Content" class="form-control"></textarea>
+                <textarea asp-for="Content" 
+                class="form-control"
+                style="height: 150px; resize: none;"
+                placeholder="@Html.DisplayNameFor(model => model.Content)"></textarea>
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
 
-            <div class="form-group mb-2">
-                <label asp-for="ImageUrl">Upload Image</label>
-                <input type="file" name="imageFile" class="form-control-file" />
+            <div class="form-group mb-2 row align-items-center">
+                <div class="col-sm-8">
+                    <input type="file" name="imageFile" class="form-control" id="formFile" />
+                </div>
+                <div class="col-sm-4">
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        Post 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5m-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5" />
+                        </svg>
+                    </button>
+                </div>
             </div>
-
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-
         </form>
+        <div>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z" />
+                </svg> 
+                Back to Blog
+            </a>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to Blog</a>
 </div>
 
 @section Scripts {
