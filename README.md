@@ -14,5 +14,5 @@
 - `xunit > v2.7.0`
 - `Microsoft.EntityFrameworkCore.InMemory > v8.0.3`
 
-After package installation, run the commande `Update-Database` in the NuGet Package Manager Console under:
+After package installation, run the command `Update-Database` in the NuGet Package Manager Console under:
 > Tools > NuGet Package Manager > Package Manager Console
