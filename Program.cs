@@ -47,6 +47,8 @@ builder.Services.Configure<IISServerOptions>(options =>
     options.AllowSynchronousIO = true; // Or configure other options as needed
 });
 
+builder.Services.AddScoped<UserAccountService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -76,8 +78,6 @@ app.MapRazorPages();
 
 await RolesInitializer.CreateRoles(app.Services);
 
-app.MapRazorPages();
 
-await RolesInitializer.CreateRoles(app.Services);
 
 app.Run();

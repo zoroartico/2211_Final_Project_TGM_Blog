@@ -1,4 +1,5 @@
-﻿@model UserAccounts
+﻿@model _2211_Final_Project_TGM_Blog.Models.Admin.UserAccounts
+
 @if (Model != null)
 {
     <div>
@@ -12,8 +13,10 @@
             <span>@Model.Email</span>
         </div>
         <div>
-            <label>Role:</label>
-            @{var isFirst = true;}
+            <label>Roles:</label>
+            @{
+                var isFirst = true;
+            }
             @foreach (var role in Model.Role)
             {
                 if (!isFirst)
@@ -35,17 +38,15 @@
                     <input type="text" id="Email" name="Email" value="@Model.Email" />
                 </div>
                 <div>
-                    <label for="Role">Update Role:</label>
-                    <select id="Role" name="Role">
-                        <option value="@Model.Role.FirstOrDefault()">@Model.Role.FirstOrDefault()</option>
+                    <label for="Role">Update Roles:</label>
+                    <div>
                         @foreach (var role in Model.RoleList)
                         {
-                            if (role != @Model.Role.FirstOrDefault())
-                            {
-                                <option value="@role">@role</option>
-                            }
+                            <input type="checkbox" name="Role" value="@role" @(Model.Role.Contains(role) ? "checked" : "") />
+                            <label>@role</label>
+                            <br />
                         }
-                    </select>
+                    </div>
                 </div>
 
                 <input type="hidden" name="RoleList" value="@Model.RoleList" />
