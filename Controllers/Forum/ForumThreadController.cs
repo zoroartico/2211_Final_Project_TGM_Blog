@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using _2211_Final_Project_TGM_Blog.Data;
 using _2211_Final_Project_TGM_Blog.Models.Forum;
 using System.Threading.Tasks;
+using _2211_Final_Project_TGM_Blog.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace _2211_Final_Project_TGM_Blog.Controllers.Forum
 {
@@ -12,19 +14,24 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Forum
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<ForumThreadController> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ForumThreadController(ApplicationDbContext context, ILogger<ForumThreadController> logger)
+        public ForumThreadController(ApplicationDbContext context, ILogger<ForumThreadController> logger, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _logger = logger;
+            _userManager = userManager;
         }
 
         // Details Action
         public async Task<IActionResult> Details(int id)
         {
             _logger.LogInformation($"Accessing details for thread ID: {id}");
+
             var forumThread = await _context.ForumThreads
                                             .Include(t => t.Posts)
+                                            .ThenInclude(p => p.User)
+                                            .AsNoTracking()
                                             .FirstOrDefaultAsync(t => t.Id == id);
 
             if (forumThread == null)
@@ -33,14 +40,38 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Forum
                 return NotFound();
             }
 
-            return View(forumThread);
+            var postViewModels = new List<PostViewModel>();
+
+            foreach (var post in forumThread.Posts)
+            {
+                var user = await _userManager.FindByIdAsync(post.UserId.ToString());
+                var username = user?.UserName;
+
+                postViewModels.Add(new PostViewModel
+                {
+                    Id = post.Id,
+                    Content = post.Content,
+                    CreatedAt = post.CreatedAt,
+                    ImageData = post.ImageData,
+                    Username = username
+                });
+            }
+
+            var viewModel = new ForumThreadViewModel
+            {
+                Id = forumThread.Id,
+                Title = forumThread.Title,
+                CreatedAt = forumThread.CreatedAt,
+                Posts = postViewModels
+            };
+
+            return View(viewModel);
         }
 
         // Create Action
         [Authorize(Roles ="Admin")]
         public IActionResult Create(int categoryId)
         {
-            // Optionally, pass the CategoryId to the view to pre-select the category or use it in the view logic
             ViewBag.CategoryId = categoryId;
             _logger.LogInformation("Showing the Create Thread form.");
             return View();

@@ -2,7 +2,7 @@
 {
     public class SupportDashboardViewModel
     {
-        public List<ChatRequest> PendingRequests { get; set; } = new List<ChatRequest>();
-        public List<Chat> Chats { get; set; } = new List<Chat>();
+        public IEnumerable<ChatViewModel>? Chats { get; set; }
+        public IEnumerable<ChatRequest>? PendingRequests { get; set; }
     }
 }

@@ -45,7 +45,17 @@
             {
                 <div class="card mb-2">
                     <div class="card-body">
-                        <h5 class="card-title">Chat with @chat.User2Id</h5>
+                        <h5 class="card-title">
+                            @if (User.IsInRole("Agent"))
+                            {
+                                @:Chat with @chat.User1Username
+                            }
+                            else if (User.IsInRole("User"))
+                            {
+                                @:Chat with @chat.User2Username
+                            }
+                        </h5>
+                        <p class="card-text text-muted">Chat started at: @chat.StartTime.ToString("MMMM dd, yyyy hh:mm tt")</p>
                         <a href="@Url.Action("Details", "Chat", new { id = chat.Id })" class="btn btn-outline-primary">View Chat</a>
                     </div>
                 </div>

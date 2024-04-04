@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using _2211_Final_Project_TGM_Blog.Data;
 using _2211_Final_Project_TGM_Blog.Models.SupportChat;
+using Microsoft.AspNetCore.Identity;
 
 namespace _2211_Final_Project_TGM_Blog.Controllers
 {
@@ -13,22 +14,42 @@ namespace _2211_Final_Project_TGM_Blog.Controllers
     public class ChatRequestController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ChatRequestController(ApplicationDbContext context)
+        public ChatRequestController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: /ChatRequest/SupportDashboard
         public async Task<IActionResult> SupportDashboard()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var chatList = await _context.Chats
+                .Where(chat => chat.User1Id == userId || chat.User2Id == userId)
+                .OrderByDescending(chat => chat.StartTime)
+                .ToListAsync();
+
+            var chatViewModels = new List<ChatViewModel>();
+            foreach (var chat in chatList)
+            {
+                var user1 = await _userManager.FindByIdAsync(chat.User1Id);
+                var user2 = await _userManager.FindByIdAsync(chat.User2Id);
+
+                chatViewModels.Add(new ChatViewModel
+                {
+                    Id = chat.Id,
+                    StartTime = chat.StartTime,
+                    EndTime = chat.EndTime,
+                    User1Username = user1?.UserName,
+                    User2Username = user2?.UserName
+                });
+            }
+
             var viewModel = new SupportDashboardViewModel
             {
-                Chats = await _context.Chats
-                    .Where(chat => chat.User1Id == userId || chat.User2Id == userId)
-                    .OrderByDescending(chat => chat.StartTime)
-                    .ToListAsync()
+                Chats = chatViewModels
             };
 
             if (User.IsInRole("Agent"))
