@@ -81,7 +81,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             return View();
         }
 
-        //method that posts a created blofpost, only accessible to the "Dev" role
+        //method that posts a created blogpost, only accessible to the "Dev" role
         [Authorize (Roles = "Dev")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -123,7 +123,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         }
 
         //method only accessible to "Dev"s that deletes a given blog post
-        [Authorize(Roles = "Dev")]
+        [Authorize (Roles = "Dev")]
         [HttpPost]
         public async Task<IActionResult> Delete(int postId)
         {
