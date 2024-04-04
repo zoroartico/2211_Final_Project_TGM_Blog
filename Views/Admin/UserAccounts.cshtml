@@ -1,0 +1,27 @@
+﻿@model _2211_Final_Project_TGM_Blog.Models.Admin.UserAccounts
+
+@{
+    TempData["Title"] = "User Accounts";
+}
+
+<h1>@TempData["Title"]</h1>
+
+@if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+{
+    <div class="alert alert-danger" role="alert">
+        @Html.Raw(TempData["ErrorMessage"])
+    </div>
+}
+
+<!-- Search form -->
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Search" class="control-label">Search Username or Email:</label>
+        <input asp-for="Search" class="form-control" />
+        <button type="submit" class="btn btn-primary m-1">Search</button>
+    </div>
+</form>
+<div id="userDetails">
+    <!-- Renders the _UserDetails partial view here -->
+    @await Html.PartialAsync("_UserDetails", Model)
+</div>

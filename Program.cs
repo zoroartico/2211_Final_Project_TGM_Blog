@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
+
+using Microsoft.Extensions.Logging;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using _2211_Final_Project_TGM_Blog.Services;
@@ -43,6 +47,8 @@ builder.Services.Configure<IISServerOptions>(options =>
     options.AllowSynchronousIO = true;
 });
 
+builder.Services.AddScoped<UserAccountService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -68,9 +74,10 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.MapRazorPages();
 
 await RolesInitializer.CreateRoles(app.Services);
+
+
 
 app.Run();
