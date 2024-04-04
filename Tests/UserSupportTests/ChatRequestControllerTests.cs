@@ -11,7 +11,7 @@ using _2211_Final_Project_TGM_Blog.Models.SupportChat;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 
-namespace _2211_Final_Project_TGM_Blog_Tests
+namespace _2211_Final_Project_TGM_Blog.Tests.UserSupportTests
 {
     public class ChatRequestControllerTests
     {

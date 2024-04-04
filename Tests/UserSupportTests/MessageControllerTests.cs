@@ -10,7 +10,7 @@ using _2211_Final_Project_TGM_Blog.Controllers;
 using _2211_Final_Project_TGM_Blog.Data;
 using _2211_Final_Project_TGM_Blog.Models.SupportChat;
 
-namespace _2211_Final_Project_TGM_Blog_Tests
+namespace _2211_Final_Project_TGM_Blog.Tests.UserSupportTests
 {
     public class MessageControllerTests
     {
