@@ -104,7 +104,7 @@ public class LikeService
     //gets the id of a like by the postId and userId combination key 
     public async Task<int> GetLikeId(int postId, string userId)
     {
-        var like = await GetLike(postId, userId);
+        var like = await GetLike(postId, userId) ?? throw new Exception("Like not found.");
         return like.Id;
     }
 

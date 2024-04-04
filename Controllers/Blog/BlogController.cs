@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-
-using _2211_Final_Project_TGM_Blog.Data;
+﻿using _2211_Final_Project_TGM_Blog.Data;
 using _2211_Final_Project_TGM_Blog.Models.Blog;
 using _2211_Final_Project_TGM_Blog.Services;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
 {
@@ -20,8 +17,8 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         private readonly IWebHostEnvironment _hostingEnvironment;
 
         //constructing the BlogController class
-        public BlogController(ApplicationDbContext context, 
-            UserManager<IdentityUser> userManager, 
+        public BlogController(ApplicationDbContext context,
+            UserManager<IdentityUser> userManager,
             UserRoleManager userRoleManager,
             ILogger<BlogController> logger,
             LikeService likeService,
@@ -35,36 +32,6 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
             _hostingEnvironment = hostingEnvironment;
         }
 
-        //function that utilizes the _userRoleManager to give a user a "Dev" role
-        public async Task<IActionResult> MakeUserDev(string userId)
-        {
-            var result = await _userRoleManager.AddUserToRole(userId, "Dev");
-            if (result)
-            {
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                _logger.LogError("Failed to make the user a Dev.");
-                return RedirectToAction("Index");
-            }
-        }
-
-        //function that utilizes the _userRoleManager to remove all roles from a user
-        public async Task<IActionResult> MakeUserUser(string userId)
-        {
-            var result = await _userRoleManager.SetDefaultRole(userId);
-            if (result)
-            {
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                _logger.LogError("Failed to make the user a User.");
-                return RedirectToAction("Index");
-            }
-        }
-
         //index method, loads when entering the blog controller
         public IActionResult Index()
         {
@@ -74,7 +41,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         }
 
         //method onluy accessible to "Dev"s to create a blog post
-        [Authorize (Roles = "Dev")] //only users in "Dev" role can access this action
+        [Authorize(Roles = "Dev")] //only users in "Dev" role can access this action
         [HttpGet]
         public IActionResult CreateBlogPost()
         {
@@ -82,7 +49,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         }
 
         //method that posts a created blogpost, only accessible to the "Dev" role
-        [Authorize (Roles = "Dev")]
+        [Authorize(Roles = "Dev")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateBlogPost(BlogPost blogPost, IFormFile imageFile)
@@ -100,15 +67,12 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
                     }
                     blogPost.ImageUrl = "/images/" + uniqueFileName;
                 }
-
-                blogPost.UserId = _userManager.GetUserId(User);
-
+                blogPost.UserId = _userManager.GetUserId(User) ?? throw new Exception("User not found.");
                 _logger.LogInformation($"Blog Post information" +
                     $"Title: {blogPost.Title}" +
                     $"Content: {blogPost.Content}" +
                     $"ImgURL: {blogPost.ImageUrl}" +
                     $"UserID: {blogPost.UserId}");
-
                 _context.BlogPosts.Add(blogPost);
                 await _context.SaveChangesAsync();
                 //redirects to index upon completion
@@ -123,13 +87,13 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         }
 
         //method only accessible to "Dev"s that deletes a given blog post
-        [Authorize (Roles = "Dev")]
+        [Authorize(Roles = "Dev")]
         [HttpPost]
         public async Task<IActionResult> Delete(int postId)
         {
             try
             {
-                var blogPost = _context.BlogPosts.FirstOrDefault(b => b.Id == postId);
+                var blogPost = _context.BlogPosts.FirstOrDefault(b => b.Id == postId) ?? throw new Exception("Post not found.");
                 _context.BlogPosts.Remove(blogPost);
                 await _context.SaveChangesAsync();
             }
@@ -146,11 +110,19 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Like(int postId)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var blogPost = await _context.BlogPosts.FindAsync(postId);
-            await _likeService.Like(user.Id, postId, blogPost);
-            var model = await GetLikeButtonModel(postId);
-            return PartialView("_LikeButtonPartial", model);
+            try
+            {
+                var user = await _userManager.GetUserAsync(User) ?? throw new Exception("User not found.");
+                var blogPost = await _context.BlogPosts.FindAsync(postId) ?? throw new Exception("Post not found.");
+                await _likeService.Like(user.Id, postId, blogPost);
+                var model = await GetLikeButtonModel(postId);
+                return PartialView("_LikeButtonPartial", model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting blog post.");
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         //method that returns a partial view upon a user unliking a post
@@ -168,7 +140,8 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         //method that handles generation of the LikeButton model in a given view
         private async Task<LikeButtonModel> GetLikeButtonModel(int postId)
         {
-            var currentUser = await _userManager.GetUserAsync(User);
+            if (User.Identity is null) { throw new Exception("User's Identity is not Authenticated."); }
+            var currentUser = await _userManager.GetUserAsync(User) ?? throw new Exception("User not found.");
             bool userLikedPost = await _likeService.HasUserLikedPost(postId, currentUser.Id);
             int likeId = userLikedPost ? await _likeService.GetLikeId(postId, currentUser.Id) : -1;
             int likeQty = await _likeService.GetLikesByLikeId(likeId);
@@ -181,7 +154,5 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
                 LikeQTY = likeQty
             };
         }
-
     }
-
 }

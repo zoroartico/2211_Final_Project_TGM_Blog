@@ -21,19 +21,6 @@
         <a asp-controller="Blog" asp-action="CreateBlogPost" class="btn btn-primary col-sm-2">
             Create Blog Post
         </a>
-        <form class="col-sm-2 mt-2" asp-action="MakeUserUser" asp-route-userId="@currentUser.Id" method="post">
-            <button type="submit" class="btn btn-success">
-                Revert Role
-            </button>
-        </form>
-    }
-    else if (isAuthenticated)
-    {
-        <form class="col-sm-2 mt-2" asp-action="MakeUserDev" asp-route-userId="@currentUser.Id" method="post">
-            <button type="submit" class="btn btn-success">
-                Get Dev Role
-            </button>
-        </form>
     }
 </div>
 
