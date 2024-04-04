@@ -1,4 +1,5 @@
 ﻿using _2211_Final_Project_TGM_Blog.Models.Blog;
+using _2211_Final_Project_TGM_Blog.Models.Forum;
 using _2211_Final_Project_TGM_Blog.Models.SupportChat;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,9 @@ namespace _2211_Final_Project_TGM_Blog.Data
         public DbSet<ChatRequest> ChatRequests { get; set; }
         public DbSet<BlogPost> BlogPosts { get; set; }
         public DbSet<Like> Likes { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<ForumThread> ForumThreads { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

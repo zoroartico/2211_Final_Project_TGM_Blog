@@ -1,0 +1,45 @@
+﻿@model _2211_Final_Project_TGM_Blog.Models.Forum.CategoryDetailsViewModel
+
+@{
+    ViewData["Title"] = "Category Details";
+}
+
+<div class="container">
+    <h1>@Model.Category.Name</h1>
+    <p>@Model.Category.Description</p>
+
+    <a asp-action="Create" asp-controller="ForumThread" asp-route-categoryId="@Model.Category.Id" class="btn btn-primary mb-3">Create Thread</a>
+
+    @if (Model.Threads != null && Model.Threads.Any())
+    {
+        <h2>Threads</h2>
+        <div class="row">
+            @foreach (var thread in Model.Threads)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@thread.Title</h5>
+                            <p class="card-text">Created: @thread.CreatedAt.ToShortDateString()</p>
+                        </div>
+                        <div class="card-footer">
+                            <a asp-action="Details" asp-controller="ForumThread" asp-route-id="@thread.Id" class="btn btn-primary btn-sm">View Thread</a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <form asp-action="Delete" asp-controller="ForumThread" asp-route-id="@thread.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm ml-2" onclick="return confirm('Are you sure you want to delete this thread?');">Delete</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No threads in this category yet.</p>
+    }
+
+    <a asp-action="Index" asp-controller="Category" class="btn btn-secondary mt-3">Back to Categories</a>
+</div>
