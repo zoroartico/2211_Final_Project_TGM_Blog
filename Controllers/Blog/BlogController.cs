@@ -11,7 +11,6 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly UserRoleManager _userRoleManager;
         private readonly ILogger<BlogController> _logger;
         private readonly LikeService _likeService;
         private readonly IWebHostEnvironment _hostingEnvironment;
@@ -19,14 +18,12 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         //constructing the BlogController class
         public BlogController(ApplicationDbContext context,
             UserManager<IdentityUser> userManager,
-            UserRoleManager userRoleManager,
             ILogger<BlogController> logger,
             LikeService likeService,
             IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
             _userManager = userManager;
-            _userRoleManager = userRoleManager;
             _logger = logger;
             _likeService = likeService;
             _hostingEnvironment = hostingEnvironment;
