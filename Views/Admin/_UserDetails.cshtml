@@ -1,63 +1,64 @@
-﻿@model _2211_Final_Project_TGM_Blog.Models.Admin.UserAccounts
-
-@if (Model != null)
+﻿@if (Model != null)
 {
-    <div>
+    <div class="container card ">
         <h4>User Details</h4>
-        <div>
-            <label>Username:</label>
-            <span>@Model.Username</span>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Username:</label>
+                <span>@Model.Username</span>
+            </div>
+            <div class="col-md-6">
+                <label>Email:</label>
+                <span>@Model.Email</span>
+            </div>
         </div>
-        <div>
-            <label>Email:</label>
-            <span>@Model.Email</span>
-        </div>
-        <div>
-            <label>Roles:</label>
-            @{
-                var isFirst = true;
-            }
-            @foreach (var role in Model.Role)
-            {
-                if (!isFirst)
-                {
-                    <span>,&nbsp;</span>
-                }
-                isFirst = false;
-                <span>@role</span>
-            }
-        </div>
-        <div>
-            <form asp-action="Update" asp-controller="Admin">
+        <div class="row">
+            <div class="col-md-12">
+                <label>Roles:</label>
                 <div>
-                    <label for="Username">Update Username:</label>
-                    <input type="text" id="Username" name="Username" value="@Model.Username" />
-                </div>
-                <div>
-                    <label for="Email">Update Email:</label>
-                    <input type="text" id="Email" name="Email" value="@Model.Email" />
-                </div>
-                <div>
-                    <label for="Role">Update Roles:</label>
-                    <div>
-                        @foreach (var role in Model.RoleList)
+                    @{
+                        var isFirst = true;
+                    }
+                    @foreach (var role in Model.Role)
+                    {
+                        if (!isFirst)
                         {
-                            <input type="checkbox" name="Role" value="@role" @(Model.Role.Contains(role) ? "checked" : "") />
-                            <label>@role</label>
-                            <br />
+                            <span>,&nbsp;</span>
                         }
-                    </div>
+                        isFirst = false;
+                        <span>@role</span>
+                    }
                 </div>
-
-                <input type="hidden" name="RoleList" value="@Model.RoleList" />
-                <input type="hidden" name="Search" value="@Model.Search" />
-
-                <button class="btn btn-info" type="submit">Update</button>
-            </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form asp-action="Update" asp-controller="Admin">
+                    <div class="form-group">
+                        <label for="Username">Update Username:</label>
+                        <input type="text" class="form-control" id="Username" name="Username" value="@Model.Username" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Email">Update Email:</label>
+                        <input type="text" class="form-control" id="Email" name="Email" value="@Model.Email" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Role">Update Roles:</label>
+                        <div>
+                            @foreach (var role in Model.RoleList)
+                            {
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="Role" value="@role" @(Model.Role.Contains(role) ? "checked" : "") />
+                                    <label class="form-check-label">@role</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <input type="hidden" name="RoleList" value="@Model.RoleList" />
+                    <input type="hidden" name="Search" value="@Model.Search" />
+                    <button class="btn btn-info" type="submit">Update</button>
+                </form>
+            </div>
         </div>
     </div>
-}
-else
-{
-    <div>@ViewData["ErrorMessage"]</div>
 }

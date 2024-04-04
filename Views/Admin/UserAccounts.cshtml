@@ -1,15 +1,15 @@
 ﻿@model _2211_Final_Project_TGM_Blog.Models.Admin.UserAccounts
 
 @{
-    ViewData["Title"] = "User Accounts";
+    TempData["Title"] = "User Accounts";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1>@TempData["Title"]</h1>
 
-@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"] as string))
+@if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
 {
     <div class="alert alert-danger" role="alert">
-        @ViewData["ErrorMessage"]
+        @Html.Raw(TempData["ErrorMessage"])
     </div>
 }
 
@@ -22,6 +22,6 @@
     </div>
 </form>
 <div id="userDetails">
-    <!-- Render the _UserDetails partial view here -->
+    <!-- Renders the _UserDetails partial view here -->
     @await Html.PartialAsync("_UserDetails", Model)
 </div>

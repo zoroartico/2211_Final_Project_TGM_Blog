@@ -57,6 +57,7 @@ namespace _2211_Final_Project_TGM_Blog.Services
                 var result = await _userManager.UpdateAsync(user);
                 if (!result.Succeeded)
                     return false;
+                model.Search = user.UserName;
             }
 
             if (user.Email != model.Email)

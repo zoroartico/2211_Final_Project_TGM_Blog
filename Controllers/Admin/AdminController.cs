@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.IdentityModel.Tokens;
 using System.Threading.Tasks;
 
 namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
@@ -23,12 +24,12 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
         {
             if (!string.IsNullOrEmpty(search)) { 
                 var userAccount = await _userAccountService.GetUserAccountDetailsAsync(search);
-                if (userAccount == null)
+                if (userAccount != null)
                 {
-                    ViewData["ErrorMessage"] = "User not found.";
-                    return View();
+                    return View(userAccount);
                 }
-                return View(userAccount);
+                //set error message for invalid user
+                TempData["ErrorMessage"] = "User not found.";
             }
             return View();
         }
@@ -36,17 +37,29 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Update(UserAccounts model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
+                //retrieve all error messages from ModelState
+                var errorMessages = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                //creates string with error list items, must be displayed with @html.Raw(~~~) or else <br> will be displayed as string
+                var errorMessage = string.Join("<br>", errorMessages);
+
+                //set error message for invalid data being supplied for update
+                TempData["ErrorMessage"] = errorMessage;
+            }
+            else {
+                //attempt update data
                 var result = await _userAccountService.UpdateUserAccountAsync(model);
                 if (!result)
                 {
-                    ViewData["ErrorMessage"] = "User not found or update failed.";
-                    return View("UserAccounts", model);
+                    //set error message for unable to update user data
+                    TempData["ErrorMessage"] = "Unexpected error. Update failed";
                 }
-                return RedirectToAction("UserAccounts", new { model.Search });
             }
-            return View("UserAccounts", model);
+            return RedirectToAction("UserAccounts", new { model.Search });
         }
     }
 }
