@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System.Security.Claims;
+using Xunit;
 
 namespace _2211_Final_Project_TGM_Blog.Tests.UserSupportTests
 {
@@ -25,7 +26,7 @@ namespace _2211_Final_Project_TGM_Blog.Tests.UserSupportTests
             // Setup HttpContext to simulate User Identity
             _httpContext = new DefaultHttpContext
             {
-                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim
+                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                     {
                     new Claim(ClaimTypes.NameIdentifier, "userId"),
                     }, "TestAuthType"))
