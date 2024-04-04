@@ -100,6 +100,7 @@ namespace _2211_Final_Project_TGM_Blog.Areas.Identity.Pages.Account
 
             [Required]
             [Display(Name = "Username")]
+            [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             public string Username { get; set; }
 
             [Display(Name = "Role")]
