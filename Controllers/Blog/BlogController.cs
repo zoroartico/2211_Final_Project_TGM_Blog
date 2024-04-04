@@ -49,7 +49,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         [Authorize(Roles = "Dev")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateBlogPost(BlogPost blogPost, IFormFile imageFile)
+        public async Task<IActionResult> CreateBlogPost(BlogPost blogPost, IFormFile? imageFile)
         {
             try
             {
