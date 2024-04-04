@@ -224,6 +224,56 @@ namespace _2211_Final_Project_TGM_Blog.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("_2211_Final_Project_TGM_Blog.Models.Blog.BlogPost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BlogPosts");
+                });
+
+            modelBuilder.Entity("_2211_Final_Project_TGM_Blog.Models.Blog.Like", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BlogPostId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogPostId");
+
+                    b.ToTable("Likes");
+                });
+
             modelBuilder.Entity("_2211_Final_Project_TGM_Blog.Models.SupportChat.Chat", b =>
                 {
                     b.Property<int>("Id")
@@ -357,6 +407,17 @@ namespace _2211_Final_Project_TGM_Blog.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("_2211_Final_Project_TGM_Blog.Models.Blog.Like", b =>
+                {
+                    b.HasOne("_2211_Final_Project_TGM_Blog.Models.Blog.BlogPost", "BlogPost")
+                        .WithMany("Likes")
+                        .HasForeignKey("BlogPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BlogPost");
+                });
+
             modelBuilder.Entity("_2211_Final_Project_TGM_Blog.Models.SupportChat.Message", b =>
                 {
                     b.HasOne("_2211_Final_Project_TGM_Blog.Models.SupportChat.Chat", "Chat")
@@ -366,6 +427,11 @@ namespace _2211_Final_Project_TGM_Blog.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Chat");
+                });
+
+            modelBuilder.Entity("_2211_Final_Project_TGM_Blog.Models.Blog.BlogPost", b =>
+                {
+                    b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("_2211_Final_Project_TGM_Blog.Models.SupportChat.Chat", b =>
