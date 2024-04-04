@@ -40,7 +40,7 @@ builder.Services.Configure<RouteOptions>(options =>
 // Register IISServerOptions
 builder.Services.Configure<IISServerOptions>(options =>
 {
-    options.AllowSynchronousIO = true; // Or configure other options as needed
+    options.AllowSynchronousIO = true;
 });
 
 var app = builder.Build();
