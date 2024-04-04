@@ -13,9 +13,15 @@
         </div>
         <div>
             <label>Role:</label>
+            @{var isFirst = true;}
             @foreach (var role in Model.Role)
             {
-                <span value="@role">@role</span>
+                if (!isFirst)
+                {
+                    <span>,&nbsp;</span>
+                }
+                isFirst = false;
+                <span>@role</span>
             }
         </div>
         <div>
@@ -31,12 +37,20 @@
                 <div>
                     <label for="Role">Update Role:</label>
                     <select id="Role" name="Role">
+                        <option value="@Model.Role.FirstOrDefault()">@Model.Role.FirstOrDefault()</option>
                         @foreach (var role in Model.RoleList)
                         {
-                            <option value="@role">@role</option>
+                            if (role != @Model.Role.FirstOrDefault())
+                            {
+                                <option value="@role">@role</option>
+                            }
                         }
                     </select>
                 </div>
+
+                <input type="hidden" name="RoleList" value="@Model.RoleList" />
+                <input type="hidden" name="Search" value="@Model.Search" />
+
                 <button class="btn btn-info" type="submit">Update</button>
             </form>
         </div>

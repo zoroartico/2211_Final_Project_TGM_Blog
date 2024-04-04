@@ -43,7 +43,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
                 var allRoles = _roleManager.Roles.Select(r => r.Name).ToList();
 
                 // Populate the view model with user information
-                var userAccounts = new UserAccounts
+                var userAccount = new UserAccounts
                 {
                     Username = user.UserName,
                     Email = user.Email,
@@ -53,7 +53,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
                 };
 
                 // Pass the user details to the view
-                return View(userAccounts);
+                return View(userAccount);
             }
 
             // If search parameter is not provided, return the view without populating user details
@@ -71,6 +71,22 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
 
                 if (user != null)
                 {
+                    // Update user's username if it has changed
+                    if (user.UserName != model.Username)
+                    {
+                        user.UserName = model.Username;
+                        var result = await _userManager.UpdateAsync(user);
+                        if (!result.Succeeded)
+                        {
+                            foreach (var error in result.Errors)
+                            {
+                                ModelState.AddModelError(string.Empty, error.Description);
+                            }
+                            return View(model);
+                        }
+                        model.Search = model.Username;
+                    }
+
                     // Update user's email if it has changed
                     if (user.Email != model.Email)
                     {
@@ -100,7 +116,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
                         await _userManager.AddToRoleAsync(user, model.Role.FirstOrDefault());
                     }
 
-                    return RedirectToAction("UserAccounts",model.Search);
+                    return RedirectToAction("UserAccounts", new { model.Search });
                 }
                 else
                 {
