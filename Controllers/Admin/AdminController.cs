@@ -1,13 +1,8 @@
 ﻿using _2211_Final_Project_TGM_Blog.Models.Admin;
 using _2211_Final_Project_TGM_Blog.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.IdentityModel.Tokens;
-using System.Threading.Tasks;
-
 namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
 {
     [Authorize(Roles = "Admin")]
@@ -29,22 +24,26 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
             // Initialize TempData
             TempData ??= new TempDataDictionary(HttpContext, _tempDataProvider);
 
+            //if search is null, return view without error, user has just loaded int the page
             if (!string.IsNullOrEmpty(search)) { 
                 var userAccount = await _userAccountService.GetUserAccountDetailsAsync(search);
+                //if return is null, return view with error, user has searched invalid user
                 if (userAccount != null)
                 {
+                    //Successful user search
                     return View(userAccount);
                 }
-                //set error message for invalid user
+                //set error message for invalid search
                 TempData["ErrorMessage"] = "User not found.";
             }
+            //On load returns base view
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Update(UserAccounts model)
         {
-            // Initialize TempData
+            // Initialize TempData to avoid null reference error
             TempData ??= new TempDataDictionary(HttpContext, _tempDataProvider);
 
             if (!ModelState.IsValid)
@@ -54,7 +53,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
                     .SelectMany(v => v.Errors)
                     .Select(e => e.ErrorMessage)
                     .ToList();
-                //creates string with error list items, must be displayed with @html.Raw(~~~) or else <br> will be displayed as string
+                //creates string with error list items, must be displayed with @html.Raw(errorMessage) or else <br> will be displayed as string
                 var errorMessage = string.Join("<br>", errorMessages);
 
                 //set error message for invalid data being supplied for update
@@ -69,6 +68,7 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
                     TempData["ErrorMessage"] = "Unexpected error. Update failed";
                 }
             }
+            //Redirects back to user account page with last user updated already in partial view
             return RedirectToAction("UserAccounts", new { model.Search });
         }
     }
