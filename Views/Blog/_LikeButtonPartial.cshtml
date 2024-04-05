@@ -1,8 +1,6 @@
 ﻿@model _2211_Final_Project_TGM_Blog.Models.Blog.LikeButtonModel
 @{
-    string likesCounter;
-    @if (Model.LikeQTY > 0) { likesCounter = "Likes: " + Model.LikeQTY; }
-    else { likesCounter = "No likes"; }
+    string likesCounter = "Likes: " + Model.LikeQTY;
 }
 
 <!-- this partial view generates the current likes and valid button state for the blog posts -->
