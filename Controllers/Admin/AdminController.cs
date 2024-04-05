@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.IdentityModel.Tokens;
 using System.Threading.Tasks;
 
@@ -13,15 +14,21 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
     public class AdminController : Controller
     {
         private readonly UserAccountService _userAccountService;
+        private readonly ITempDataProvider _tempDataProvider;
 
-        public AdminController(UserAccountService userAccountService)
+
+        public AdminController(UserAccountService userAccountService, ITempDataProvider tempDataProvider)
         {
             _userAccountService = userAccountService;
+            _tempDataProvider = tempDataProvider;
         }
 
         [Route("admin/user-accounts")]
         public async Task<IActionResult> UserAccounts(string search)
         {
+            // Initialize TempData
+            TempData ??= new TempDataDictionary(HttpContext, _tempDataProvider);
+
             if (!string.IsNullOrEmpty(search)) { 
                 var userAccount = await _userAccountService.GetUserAccountDetailsAsync(search);
                 if (userAccount != null)
@@ -37,6 +44,9 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Update(UserAccounts model)
         {
+            // Initialize TempData
+            TempData ??= new TempDataDictionary(HttpContext, _tempDataProvider);
+
             if (!ModelState.IsValid)
             {
                 //retrieve all error messages from ModelState

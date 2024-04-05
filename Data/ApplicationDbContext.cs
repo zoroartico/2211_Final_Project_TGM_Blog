@@ -8,6 +8,8 @@ namespace _2211_Final_Project_TGM_Blog.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
+        public readonly object AspNetUsers;
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

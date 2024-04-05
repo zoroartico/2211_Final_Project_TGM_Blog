@@ -21,7 +21,9 @@
         <button type="submit" class="btn btn-primary m-1">Search</button>
     </div>
 </form>
-<div id="userDetails">
-    <!-- Renders the _UserDetails partial view here -->
-    @await Html.PartialAsync("_UserDetails", Model)
-</div>
+@if (Model != null){
+    <div id="userDetails">
+        <!-- Renders the _UserDetails partial view here -->
+        @await Html.PartialAsync("_UserDetails", Model)
+    </div>
+}

@@ -18,8 +18,12 @@ namespace _2211_Final_Project_TGM_Blog.Services
             _roleManager = roleManager;
             _userRoleManager = userRoleManager;
         }
+        public UserAccountService()
+        {
 
-        public async Task<UserAccounts> GetUserAccountDetailsAsync(string search)
+        }
+
+        public virtual async Task<UserAccounts> GetUserAccountDetailsAsync(string search)
         {
             if (string.IsNullOrEmpty(search))
                 return null;
@@ -44,7 +48,7 @@ namespace _2211_Final_Project_TGM_Blog.Services
             };
         }
 
-        public async Task<bool> UpdateUserAccountAsync(UserAccounts model)
+        public virtual async Task<bool> UpdateUserAccountAsync(UserAccounts model)
         {
             var user = await _userManager.FindByNameAsync(model.Username) ?? await _userManager.FindByEmailAsync(model.Email);
 
