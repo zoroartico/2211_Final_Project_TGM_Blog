@@ -1,22 +1,39 @@
-html {
-  font-size: 14px;
-}
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+@media (min-width: 768px)
+{
+    html 
+    {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+html 
+{
+    position: relative;
+    min-height: 100%;
 }
 
-body {
-  margin-bottom: 60px;
+body 
+{
+    font-family: 'Pixelify Sans', sans-serif;
+    margin-bottom: 60px;
+}
+
+.navbar 
+{
+    box-shadow: none;
+    background-color: #c70202;
+}
+
+.wave-container 
+{
+    position: relative;
+    height: 100px;
+    overflow: visible;
+    background-color: #fff;
 }

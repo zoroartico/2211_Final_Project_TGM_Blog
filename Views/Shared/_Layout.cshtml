@@ -9,16 +9,21 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - _2211_Final_Project_TGM_Blog</title>
+    <title>@ViewData["Title"] - 2211 Final Project - ItGM Blog</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/_2211_Final_Project_TGM_Blog.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light mb-0">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Into the Great Muscaria</a>
+                <a class="navbar-brand align-text-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <div class="d-inline-block align-text-center rounded-circle bg-white p-1">
+                        <img src="~/images/ItGM Icon.png" alt="" width="32" height="32" class="">
+                    </div>
+                    Into the Great Muscaria
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -26,28 +31,28 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <!-- Blog Link -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Blog" asp-action="Index">Dev Blog</a>
+                            <a class="nav-link" asp-area="" asp-controller="Blog" asp-action="Index">Dev Blog</a>
                         </li>
                         <!-- Support Dashboard Link -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ChatRequest" asp-action="SupportDashboard">Support</a>
+                            <a class="nav-link" asp-area="" asp-controller="ChatRequest" asp-action="SupportDashboard">Support</a>
                         </li>
                         <!-- Forum Link -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Forum</a>
+                            <a class="nav-link" asp-area="" asp-controller="Category" asp-action="Index">Forum</a>
                         @if (isAdmin)
                         {
                             <!-- Admin User Accounts Link -->
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="UserAccounts">User Accounts</a>
+                                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="UserAccounts">User Accounts</a>
                             </li>
                         }
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
@@ -55,13 +60,18 @@
             </div>
         </nav>
     </header>
+    <span class="wave-container">
+        <svg viewBox="0 0 1440 165" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#c70202" transform="scale(1,-1) translate(0,-100)" d="M0 30l60 10c60 10 180 -60 260 10c100 100 400 40 0 70c200 -20 280 -140 480 -120c140 10 200 150 360 80c120 -60 140 -160 360 -40c20 10 240 110 300 130l60 20v100H0z" />
+        </svg>
+    </span>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-center text-muted">
         <div class="container">
             &copy; 2024 - Space Mix Studios - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
