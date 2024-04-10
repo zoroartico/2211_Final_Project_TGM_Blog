@@ -30,6 +30,8 @@
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
 
+            <input type="hidden" name="UserId" value="@User.Identity.Name">
+
             <div class="form-group mb-2 row align-items-center">
                 <div class="col-sm-8">
                     <input type="file" name="imageFile" class="form-control" id="formFile" />

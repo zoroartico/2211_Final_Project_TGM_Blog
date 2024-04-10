@@ -11,7 +11,6 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly UserRoleManager _userRoleManager;
         private readonly ILogger<BlogController> _logger;
         private readonly LikeService _likeService;
         private readonly IWebHostEnvironment _hostingEnvironment;
@@ -19,14 +18,12 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         //constructing the BlogController class
         public BlogController(ApplicationDbContext context,
             UserManager<IdentityUser> userManager,
-            UserRoleManager userRoleManager,
             ILogger<BlogController> logger,
             LikeService likeService,
             IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
             _userManager = userManager;
-            _userRoleManager = userRoleManager;
             _logger = logger;
             _likeService = likeService;
             _hostingEnvironment = hostingEnvironment;
@@ -45,6 +42,10 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         [HttpGet]
         public IActionResult CreateBlogPost()
         {
+            if (!User.IsInRole("Dev"))
+            {
+                return Unauthorized();
+            }
             return View();
         }
 
@@ -52,8 +53,19 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         [Authorize(Roles = "Dev")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateBlogPost(BlogPost blogPost, IFormFile imageFile)
+        public async Task<IActionResult> CreateBlogPost(BlogPost blogPost, IFormFile? imageFile)
         {
+            if (!User.IsInRole("Dev"))
+            {
+                return Unauthorized();
+            }
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                _logger.LogInformation($"Invalid ModelState: {string.Join(", ", errors)}");
+
+                return View(blogPost);
+            }
             try
             {
                 //adds an image file if there is one
@@ -67,7 +79,6 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
                     }
                     blogPost.ImageUrl = "/images/" + uniqueFileName;
                 }
-                blogPost.UserId = _userManager.GetUserId(User) ?? throw new Exception("User not found.");
                 _logger.LogInformation($"Blog Post information" +
                     $"Title: {blogPost.Title}" +
                     $"Content: {blogPost.Content}" +
@@ -91,6 +102,10 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         [HttpPost]
         public async Task<IActionResult> Delete(int postId)
         {
+            if (!User.IsInRole("Dev"))
+            {
+                return Unauthorized();
+            }
             try
             {
                 var blogPost = _context.BlogPosts.FirstOrDefault(b => b.Id == postId) ?? throw new Exception("Post not found.");
@@ -115,12 +130,13 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
                 var user = await _userManager.GetUserAsync(User) ?? throw new Exception("User not found.");
                 var blogPost = await _context.BlogPosts.FindAsync(postId) ?? throw new Exception("Post not found.");
                 await _likeService.Like(user.Id, postId, blogPost);
-                var model = await GetLikeButtonModel(postId);
+                int likeQty = await _likeService.GetLikes(postId);
+                var model = await GetLikeButtonModel(postId, likeQty);
                 return PartialView("_LikeButtonPartial", model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting blog post.");
+                _logger.LogError(ex, "Error liking blog post.");
                 return RedirectToAction(nameof(Index));
             }
         }
@@ -131,20 +147,22 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Blog
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Unlike(int likeId)
         {
+            var like = await _likeService.GetLikeById(likeId);
+            if (like == null) { return BadRequest(); }
+            int LikeQty = await _likeService.GetLikesByLikeId(likeId) - 1;
             int postId = await _likeService.GetPostIdByLikeId(likeId);
             await _likeService.Unlike(likeId);
-            var model = await GetLikeButtonModel(postId);
+            var model = await GetLikeButtonModel(postId, LikeQty);
             return PartialView("_LikeButtonPartial", model);
         }
 
         //method that handles generation of the LikeButton model in a given view
-        private async Task<LikeButtonModel> GetLikeButtonModel(int postId)
+        private async Task<LikeButtonModel> GetLikeButtonModel(int postId, int likeQty)
         {
             if (User.Identity is null) { throw new Exception("User's Identity is not Authenticated."); }
             var currentUser = await _userManager.GetUserAsync(User) ?? throw new Exception("User not found.");
             bool userLikedPost = await _likeService.HasUserLikedPost(postId, currentUser.Id);
             int likeId = userLikedPost ? await _likeService.GetLikeId(postId, currentUser.Id) : -1;
-            int likeQty = await _likeService.GetLikesByLikeId(likeId);
             return new LikeButtonModel //returns a model with generated fields
             {
                 IsAuthenticated = User.Identity.IsAuthenticated,
