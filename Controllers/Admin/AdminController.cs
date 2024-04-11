@@ -63,14 +63,6 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
             }
             else {
 
-                // Check if the email already exists for another user
-                var existingUserByEmail = await _userAccountService.GetUserAccountDetailsAsync(model.Email);
-                if (existingUserByEmail != null && !(existingUserByEmail.Username == model.Search || existingUserByEmail.Email == model.Search))
-                {
-                    TempData["ErrorMessage"] = "Email already exists";
-                    return RedirectToAction("UserAccounts", new { model.Search });
-                }
-
                 //attempt update data
                 var result = await _userAccountService.UpdateUserAccountAsync(model);
                 if (!result)
