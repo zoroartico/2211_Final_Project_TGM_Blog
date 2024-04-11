@@ -1,5 +1,5 @@
-﻿<div class="container card ">
-    <h4>User Details</h4>
+﻿<div class="container card">
+    <h4 class="mt-2">User Details</h4>
     <div class="row">
         <label class="fw-bold">Username:</label>
         <span>@Model.Username</span>
@@ -26,11 +26,9 @@
     {
         <div class="row">
             <form asp-action="Update" asp-controller="Admin">
-                <div class="form-group navbar card p-3">
-                    <label class="fw-bold text-light" for="Username">Update Username:</label>
-                    <input type="text" class="form-control" id="Username" name="Username" value="@Model.Username" />
-                    <label class="fw-bold text-light" for="Email">Update Email:</label>
-                    <input type="text" class="form-control" id="Email" name="Email" value="@Model.Email" />
+                <div class="form-group bg-secondary card p-3">
+                    <input type="text" class="form-control" id="Username" name="Username" value="@Model.Username" placeholder="Update Username" />
+                    <input type="text" class="form-control" id="Email" name="Email" value="@Model.Email" placeholder="Update Email" />
                     <label class="fw-bold text-light" for="Role">Update Roles:</label>
                     
                     <!--Setting role adjustment checkboxes uses ~/css/site.js-->
@@ -41,10 +39,12 @@
                         }
                         @foreach (var role in Model.RoleList)
                         {
-                            <div class="col-@(columnSize+3)">
-                                <div class="form-check form-check-inline card p-4 m-2" onclick="toggleCheckbox('@role')">
-                                    <input type="checkbox" class="form-check-input" name="Role" id="@($"chk_{role}")" value="@role" @(Model.Role.Contains(role) ? "checked" : "") />
-                                    <label class="form-check-label" for="@($"chk_{role}")">@role</label>
+                            <div class="col-sm-@(columnSize+3) col-12">
+                                <div class="form-check card p-4 m-2 align-items-center justify-content-center" onclick="toggleCheckbox('@role')">
+                                    <div class="form-check-inline">
+                                        <input type="checkbox" class="form-check-input" name="Role" id="@($"chk_{role}")" value="@role" @(Model.Role.Contains(role) ? "checked" : "") />
+                                        <label class="form-check-label" for="@($"chk_{role}")">@role</label>
+                                    </div>
                                 </div>
                             </div>
                         }
@@ -52,7 +52,7 @@
                 </div>
                 <input type="hidden" name="RoleList" value="@Model.RoleList" />
                 <input type="hidden" name="Search" value="@Model.Search" />
-                <button class="btn btn-outline-success m-3" type="submit">Update</button>
+                <button class="btn btn-outline-secondary my-3" type="submit">Update</button>
             </form>
         </div>
     }

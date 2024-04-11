@@ -14,14 +14,13 @@
 }
 
 <!-- Search form -->
-<div class="row justify-content-center ">
-    <div class="card col-lg-6 navbar p-4">
-        <h1 class="text-light">@TempData["Title"]</h1>
-        <form method="post">
-            <div class="form-group ">
-                <label asp-for="Search" class="control-label text-light">Search Username or Email:</label>
-                <input asp-for="Search" class="form-control mx-2" />
-                <button type="submit" class="btn btn-primary m-1">Search</button>
+<div class="row justify-content-center">
+    <div class="card col-lg-6 p-2">
+        <h1 class="text-center mb-2">@TempData["Title"]</h1>
+        <form method="post" class="mb-2">
+            <div class="form-group d-flex">
+                <input asp-for="Search" class="form-control mx-2" placeholder="Search by Username or Email" />
+                <button type="submit" class="btn btn-outline-secondary m-1">Search</button>
             </div>
         </form>
         @if (Model != null){
