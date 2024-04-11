@@ -8,7 +8,7 @@
             {
                 <form asp-controller="ChatRequest" asp-action="Create" method="post">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-primary btn-lg">Create Chat Request</button>
+                    <button type="submit" class="btn btn-danger btn-lg">Create Chat Request</button>
                 </form>
 
                 @if (TempData["Message"] != null)
@@ -56,7 +56,7 @@
                             }
                         </h5>
                         <p class="card-text text-muted">Chat started at: @chat.StartTime.ToString("MMMM dd, yyyy hh:mm tt")</p>
-                        <a href="@Url.Action("Details", "Chat", new { id = chat.Id })" class="btn btn-outline-primary">View Chat</a>
+                        <a href="@Url.Action("Details", "Chat", new { id = chat.Id })" class="btn btn-outline-danger">View Chat</a>
                     </div>
                 </div>
             }
