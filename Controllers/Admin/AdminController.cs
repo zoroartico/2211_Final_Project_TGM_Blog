@@ -21,11 +21,13 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
         [Route("admin/user-accounts")]
         public async Task<IActionResult> UserAccounts(string search)
         {
+            
             // Initialize TempData
             TempData ??= new TempDataDictionary(HttpContext, _tempDataProvider);
 
             //if search is null, return view without error, user has just loaded int the page
-            if (!string.IsNullOrEmpty(search)) { 
+            if (!string.IsNullOrEmpty(search)) {
+                search = search.Trim();
                 var userAccount = await _userAccountService.GetUserAccountDetailsAsync(search);
                 //if return is null, return view with error, user has searched invalid user
                 if (userAccount != null)
@@ -60,6 +62,15 @@ namespace _2211_Final_Project_TGM_Blog.Controllers.Admin
                 TempData["ErrorMessage"] = errorMessage;
             }
             else {
+
+                // Check if the email already exists for another user
+                var existingUserByEmail = await _userAccountService.GetUserAccountDetailsAsync(model.Email);
+                if (existingUserByEmail != null && !(existingUserByEmail.Username == model.Search || existingUserByEmail.Email == model.Search))
+                {
+                    TempData["ErrorMessage"] = "Email already exists";
+                    return RedirectToAction("UserAccounts", new { model.Search });
+                }
+
                 //attempt update data
                 var result = await _userAccountService.UpdateUserAccountAsync(model);
                 if (!result)
