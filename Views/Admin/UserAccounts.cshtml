@@ -6,16 +6,17 @@
 
 
 
-@if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
-{
-    <div class="alert alert-danger" role="alert">
-        @Html.Raw(TempData["ErrorMessage"])
-    </div>
-}
+
 
 <!-- Search form -->
 <div class="row justify-content-center">
     <div class="card col-lg-6 p-2">
+        @if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+        {
+            <div class="alert alert-danger" role="alert">
+                @Html.Raw(TempData["ErrorMessage"])
+            </div>
+        }
         <h1 class="text-center mb-2">@TempData["Title"]</h1>
         <form method="post" class="mb-2">
             <div class="form-group d-flex">
