@@ -38,6 +38,20 @@ namespace _2211_Final_Project_TGM_Blog.Controllers
             return View(chat);
         }
 
+        public async Task<IActionResult> GetMessages(int id)
+        {
+            var messages = await _context.Messages
+                .Where(m => m.ChatId == id)
+                .OrderBy(m => m.TimeSent)
+                .Select(m => new {
+                    m.Content,
+                    m.TimeSent,
+                    SenderUserId = m.SenderUserId
+                }).ToListAsync();
+
+            return Json(messages);
+        }
+
         // Endpoint to start a new chat
         [HttpPost]
         [ValidateAntiForgeryToken]

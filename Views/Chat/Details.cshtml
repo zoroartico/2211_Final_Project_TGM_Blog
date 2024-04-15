@@ -5,7 +5,7 @@
 
 <h2>Chat Details</h2>
 
-<div class="messages">
+<div id="messagesContainer" class="messages">
     @foreach (var message in Model.Messages.OrderBy(m => m.TimeSent))
     {
         <div class="@("message " + (message.SenderUserId == currentUserId ? "current-user" : "other-user"))">
@@ -24,6 +24,36 @@
     <button type="submit" class="btn btn-danger">Send</button>
 </form>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        setInterval(function () {
+            refreshMessages();
+        }, 5000); // Refresh every 5000 milliseconds (5 seconds)
+    });
+
+    function refreshMessages() {
+        $.ajax({
+            url: '@Url.Action("GetMessages", "Chat", new { id = Model.Id })', // Make sure this URL is correct
+            type: 'GET',
+            success: function (data) {
+                var messagesHtml = '';
+                for (var i = 0; i < data.length; i++) {
+                    var message = data[i];
+                    // Determine message class based on sender user ID
+                    var messageClass = message.senderUserId === '@currentUserId' ? 'message current-user' : 'message other-user';
+                    // Build the message HTML structure
+                    messagesHtml += '<div class="' + messageClass + '">';
+                    messagesHtml += '<div class="message-content">' + message.content + '</div>';
+                    messagesHtml += '<small>' + new Date(message.timeSent).toLocaleString() + '</small>';
+                    messagesHtml += '</div>';
+                }
+                $('#messagesContainer').html(messagesHtml);
+            }
+        });
+    }
+</script>
+
 <style>
     .messages {
         display: flex;
@@ -39,6 +69,7 @@
         word-wrap: break-word;
         border-radius: 10px;
         max-width: 70%;
+        border: 1px solid black;
     }
 
     .current-user {
@@ -50,7 +81,7 @@
 
     .other-user {
         align-self: flex-start;
-        background-color: #f0f0f0;
+        background-color #f0f0f0;
         color: black;
         border-top-left-radius: 0;
     }
